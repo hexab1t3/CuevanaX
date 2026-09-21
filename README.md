@@ -45,3 +45,5 @@ No incluye registro de nuevos usuarios ni pagos. Solo lo definido para el proyec
 - Swift / SwiftUI
 - TMDB API
 - UserDefaults para favoritos
+
+si
