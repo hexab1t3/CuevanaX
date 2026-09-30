@@ -46,11 +46,170 @@ No incluye registro de nuevos usuarios ni pagos. Solo lo definido para el proyec
 - TMDB API
 - UserDefaults para favoritos
 
-- Frames
-<img width="1466" height="1314" alt="image" src="https://github.com/user-attachments/assets/b4365df4-c838-4f55-83e3-3168992ea51e" />
-<img width="2334" height="1292" alt="image" src="https://github.com/user-attachments/assets/28d000ec-fc34-49a0-99da-599b27af5203" />
-<img width="2272" height="1302" alt="image" src="https://github.com/user-attachments/assets/e81c5f39-8edc-4598-b6a2-b0689fe5ed2e" />
-<img width="2200" height="1294" alt="image" src="https://github.com/user-attachments/assets/215b0cc0-4fe6-4ec8-9744-90c9d1f9de45" />
-<img width="2282" height="1274" alt="image" src="https://github.com/user-attachments/assets/fa01c784-1abb-4601-af8e-22a242ca2867" />
+## Frames y accesibilidad
 
+Debajo de cada frame se listan las etiquetas de accesibilidad (VoiceOver) que la app le dice a las personas con discapacidad visual en cada pantalla, en orden.
 
+<!-- Grupo de Imágenes 1 -->
+<table>
+  <tr>
+    <td colspan="3" align="center">
+      <img src="https://github.com/user-attachments/assets/28d000ec-fc34-49a0-99da-599b27af5203" width="100%" />
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" width="33%">
+      <h4>Vista Login</h4>
+      <ul>
+        <li>Entra a la app</li>
+        <li>Le dice el título de la app</li>
+        <li>Le dice ingresa Correo</li>
+        <li>Le dice ingresa Contraseña</li>
+        <li>Dice iniciar sesión (Botón)</li>
+        <li>Si no tienes cuenta regístrate</li>
+      </ul>
+    </td>
+    <td valign="top" width="33%">
+      <h4>[Pantalla 2]</h4>
+      <ul>
+        <li>[Punto 1]</li>
+        <li>[Punto 2]</li>
+      </ul>
+    </td>
+    <td valign="top" width="33%">
+      <h4>[Pantalla 3]</h4>
+      <ul>
+        <li>[Punto 1]</li>
+        <li>[Punto 2]</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+<!-- Grupo de Imágenes 2 -->
+<table>
+  <tr>
+    <td colspan="3" align="center">
+      <img src="https://github.com/user-attachments/assets/e81c5f39-8edc-4598-b6a2-b0689fe5ed2e" width="100%" />
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" width="33%">
+      <h4>[Pantalla 1]</h4>
+      <ul>
+        <li>[Punto 1]</li>
+        <li>[Punto 2]</li>
+      </ul>
+    </td>
+    <td valign="top" width="33%">
+      <h4>[Pantalla 2]</h4>
+      <ul>
+        <li>[Punto 1]</li>
+        <li>[Punto 2]</li>
+      </ul>
+    </td>
+    <td valign="top" width="33%">
+      <h4>[Pantalla 3]</h4>
+      <ul>
+        <li>[Punto 1]</li>
+        <li>[Punto 2]</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+<!-- Grupo de Imágenes 3 -->
+<table>
+  <tr>
+    <td colspan="3" align="center">
+      <img src="https://github.com/user-attachments/assets/215b0cc0-4fe6-4ec8-9744-90c9d1f9de45" width="100%" />
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" width="33%">
+      <h4>[Pantalla 1]</h4>
+      <ul>
+        <li>[Punto 1]</li>
+        <li>[Punto 2]</li>
+      </ul>
+    </td>
+    <td valign="top" width="33%">
+      <h4>[Pantalla 2]</h4>
+      <ul>
+        <li>[Punto 1]</li>
+        <li>[Punto 2]</li>
+      </ul>
+    </td>
+    <td valign="top" width="33%">
+      <h4>[Pantalla 3]</h4>
+      <ul>
+        <li>[Punto 1]</li>
+        <li>[Punto 2]</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+<!-- Grupo de Imágenes 4 -->
+<table>
+  <tr>
+    <td colspan="3" align="center">
+      <img src="https://github.com/user-attachments/assets/fa01c784-1abb-4601-af8e-22a242ca2867" width="100%" />
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" width="33%">
+      <h4>[Pantalla 1]</h4>
+      <ul>
+        <li>[Punto 1]</li>
+        <li>[Punto 2]</li>
+      </ul>
+    </td>
+    <td valign="top" width="33%">
+      <h4>[Pantalla 2]</h4>
+      <ul>
+        <li>[Punto 1]</li>
+        <li>[Punto 2]</li>
+      </ul>
+    </td>
+    <td valign="top" width="33%">
+      <h4>[Pantalla 3]</h4>
+      <ul>
+        <li>[Punto 1]</li>
+        <li>[Punto 2]</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+<!-- Grupo de Imágenes 5 -->
+<table>
+  <tr>
+    <td colspan="3" align="center">
+      <img src="https://github.com/user-attachments/assets/b4365df4-c838-4f55-83e3-3168992ea51e" width="100%" />
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" width="33%">
+      <h4>[Pantalla 1]</h4>
+      <ul>
+        <li>[Punto 1]</li>
+        <li>[Punto 2]</li>
+      </ul>
+    </td>
+    <td valign="top" width="33%">
+      <h4>[Pantalla 2]</h4>
+      <ul>
+        <li>[Punto 1]</li>
+        <li>[Punto 2]</li>
+      </ul>
+    </td>
+    <td valign="top" width="33%">
+      <h4>[Pantalla 3]</h4>
+      <ul>
+        <li>[Punto 1]</li>
+        <li>[Punto 2]</li>
+      </ul>
+    </td>
+  </tr>
+</table>
