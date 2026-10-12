@@ -8,28 +8,39 @@
 import SwiftUI
 
 struct FavoritosView: View {
+    @Environment(FavoritosStore.self) var favoritos
+
     var body: some View {
-        VStack {
-            Text("Tus Favoritos")
-                .font(.title2)
-                .bold()
-                .padding()
+        NavigationStack {
+            VStack {
+                Text("Tus Favoritos")
+                    .font(.title2)
+                    .bold()
+                    .padding()
 
-            let favoritas = peliculasEjemplo.filter { $0.esFavorita }
+                let favoritas = peliculasEjemplo.filter { favoritos.esFavorita($0) }
 
-            if favoritas.isEmpty {
-                Spacer()
-                VStack(spacing: 20) {
-                    Text("💔")
-                        .font(.system(size: 80))
-                    Text("No tienes películas favoritas")
-                        .foregroundColor(.gray)
+                if favoritas.isEmpty {
+                    Spacer()
+                    VStack(spacing: 20) {
+                        Text("💔")
+                            .font(.system(size: 80))
+                        Text("No tienes películas favoritas")
+                            .foregroundColor(.gray)
+                    }
+                    Spacer()
+                } else {
+                    List(favoritas) { pelicula in
+                        NavigationLink(value: pelicula) {
+                            Text(pelicula.titulo)
+                        }
+                    }
                 }
-                Spacer()
-            } else {
-                List(favoritas) { pelicula in
-                    Text(pelicula.titulo)
-                }
+            }
+            .navigationTitle("Favoritos")
+            .toolbar(.hidden, for: .navigationBar)
+            .navigationDestination(for: Pelicula.self) { pelicula in
+                DetallePeliculaView(pelicula: pelicula)
             }
         }
     }
@@ -37,5 +48,5 @@ struct FavoritosView: View {
 
 #Preview {
     FavoritosView()
+        .environment(FavoritosStore())
 }
-

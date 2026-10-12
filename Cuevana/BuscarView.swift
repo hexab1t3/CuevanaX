@@ -11,38 +11,48 @@ struct BuscarView: View {
     @State private var textoBusqueda = ""
 
     var body: some View {
-        VStack {
-            Text("Buscar Películas")
-                .font(.title2)
-                .bold()
-                .padding()
+        NavigationStack {
+            VStack {
+                Text("Buscar Películas")
+                    .font(.title2)
+                    .bold()
+                    .padding()
 
-            TextField("Escribe el nombre de la película...", text: $textoBusqueda)
-                .padding()
-                .background(Color(.systemGray2))
-                .cornerRadius(10)
-                .padding(.horizontal)
+                TextField("Escribe el nombre de la película...", text: $textoBusqueda)
+                    .padding()
+                    .background(Color(.systemGray2))
+                    .cornerRadius(10)
+                    .padding(.horizontal)
 
-            Spacer()
+                Spacer()
 
-            if textoBusqueda.isEmpty {
-                VStack(spacing: 20) {
-                    Text("🍿")
-                        .font(.system(size: 80))
-                    Text("Busca una película")
-                        .foregroundColor(.gray)
+                if textoBusqueda.isEmpty {
+                    VStack(spacing: 20) {
+                        Text("🍿")
+                            .font(.system(size: 80))
+                        Text("Busca una película")
+                            .foregroundColor(.gray)
+                    }
+                } else {
+                    List(peliculasEjemplo.filter { $0.titulo.lowercased().contains(textoBusqueda.lowercased()) }) { pelicula in
+                        NavigationLink(value: pelicula) {
+                            Text(pelicula.titulo)
+                        }
+                    }
                 }
-            } else {
-                List(peliculasEjemplo.filter { $0.titulo.lowercased().contains(textoBusqueda.lowercased()) }) { pelicula in
-                    Text(pelicula.titulo)
-                }
+
+                Spacer()
             }
-
-            Spacer()
+            .navigationTitle("Buscar")
+            .toolbar(.hidden, for: .navigationBar)
+            .navigationDestination(for: Pelicula.self) { pelicula in
+                DetallePeliculaView(pelicula: pelicula)
+            }
         }
     }
 }
 
 #Preview {
     BuscarView()
+        .environment(FavoritosStore())
 }
