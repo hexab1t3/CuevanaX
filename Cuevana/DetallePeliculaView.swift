@@ -7,20 +7,13 @@
 import SwiftUI
 
 struct DetallePeliculaView: View {
-    @Environment(\.dismiss) var dismiss
+    @Environment(FavoritosStore.self) var favoritos
     let pelicula: Pelicula
-    @State private var esFavorita = false
 
     var body: some View {
-        VStack(spacing: 20) {
-            HStack {
-                Spacer()
-                Button("Cerrar") {
-                    dismiss()
-                }
-                .padding()
-            }
+        let esFavorita = favoritos.esFavorita(pelicula)
 
+        VStack(spacing: 20) {
             Image(systemName: "film.fill")
                 .font(.system(size: 100))
                 .foregroundColor(.gray)
@@ -39,11 +32,7 @@ struct DetallePeliculaView: View {
                 .multilineTextAlignment(.center)
 
             Button(action: {
-                esFavorita.toggle()
-                // Actualizamos el array global para que se refleje en FavoritosView
-                if let index = peliculasEjemplo.firstIndex(where: { $0.id == pelicula.id }) {
-                    peliculasEjemplo[index].esFavorita = esFavorita
-                }
+                favoritos.alternar(pelicula)
             }) {
                 Text(esFavorita ? "Quitar de Favoritos" : "Agregar a Favoritos")
                     .foregroundColor(.white)
@@ -54,13 +43,12 @@ struct DetallePeliculaView: View {
 
             Spacer()
         }
-        .onAppear {
-            self.esFavorita = pelicula.esFavorita
-        }
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.visible, for: .navigationBar)
     }
 }
 
 #Preview {
     DetallePeliculaView(pelicula: peliculasEjemplo[0])
+        .environment(FavoritosStore())
 }
-
