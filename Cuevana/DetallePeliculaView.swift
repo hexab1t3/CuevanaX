@@ -43,6 +43,8 @@ struct DetallePeliculaView: View {
 
             Spacer()
         }
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.visible, for: .navigationBar)
     }
 }
 

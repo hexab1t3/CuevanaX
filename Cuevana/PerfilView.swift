@@ -9,6 +9,7 @@ import SwiftUI
 
 struct PerfilView: View {
     @Binding var estaAutenticado: Bool
+    @Environment(FavoritosStore.self) var favoritos
 
     var body: some View {
         VStack(spacing: 30) {
@@ -27,6 +28,8 @@ struct PerfilView: View {
                     .bold()
                 Text("usuario@ejemplo.com")
                     .foregroundColor(.gray)
+                Text("Favoritas: \(favoritos.ids.count)")
+                    .font(.subheadline)
             }
 
             Button(action: {
@@ -48,5 +51,6 @@ struct PerfilView: View {
 
 #Preview {
     PerfilView(estaAutenticado: .constant(true))
+        .environment(FavoritosStore())
 }
 

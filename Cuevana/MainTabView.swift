@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MainTabView: View {
     @Binding var estaAutenticado: Bool
+    @Environment(FavoritosStore.self) var favoritos
 
     var body: some View {
         TabView {
@@ -29,6 +30,7 @@ struct MainTabView: View {
                     Image(systemName: "heart")
                     Text("Favoritos")
                 }
+                .badge(favoritos.ids.count)
 
             PerfilView(estaAutenticado: $estaAutenticado)
                 .tabItem {
@@ -41,4 +43,5 @@ struct MainTabView: View {
 
 #Preview {
     MainTabView(estaAutenticado: .constant(true))
+        .environment(FavoritosStore())
 }

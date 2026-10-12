@@ -75,7 +75,7 @@ Regla general: el estado vive en el nivel más bajo que necesitan todas las vist
 | Pila de navegación | Cada `NavigationStack` | Interno de SwiftUI | Con `NavigationLink(value:)` y `navigationDestination` no hace falta guardar la película seleccionada. |
 | Texto de búsqueda | `BuscarView` | `@State` | Solo lo usa esa vista. |
 | Película mostrada en detalle | Parámetro de `DetallePeliculaView` | `let` | Dato de solo lectura entregado por la vista que navega. |
-| Almacén de favoritos | `FavoritosStore`, creado en `CuevanaApp` | `@Observable` inyectado con `@Environment` | Lo leen y modifican Detalle y Favoritos; evita pasarlo por cada vista intermedia y refresca las vistas al cambiar. |
+| Almacén de favoritos | `FavoritosStore`, creado en `CuevanaApp` | `@Observable` inyectado con `@Environment` | Lo modifica Detalle y lo leen Favoritos, Perfil (conteo) y la pestaña Favoritos (badge); evita pasarlo por cada vista intermedia y refresca todas al cambiar. |
 | Favoritos persistidos | Disco | `UserDefaults` | Son pocos datos simples (ids de películas) y el requisito es guardarlos localmente. |
 
 ### Decisiones clave
