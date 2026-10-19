@@ -6,12 +6,16 @@
 //
 import SwiftUI
 
-struct DetallePeliculaView: View {
-    @Environment(FavoritosStore.self) var favoritos
-    let pelicula: Pelicula
+struct MovieDetailView: View {
+    @Environment(FavoritesStore.self) var favoritesStore
+    @State private var viewModel: MovieDetailViewModel
+    
+    init(movie: Movie) {
+            _viewModel = State(initialValue: MovieDetailViewModel(movie: movie))
+        }
 
     var body: some View {
-        let esFavorita = favoritos.esFavorita(pelicula)
+        let isFavorite = favoritesStore.isFavorite(viewModel.movie)
 
         VStack(spacing: 20) {
             Image(systemName: "film.fill")
@@ -19,25 +23,25 @@ struct DetallePeliculaView: View {
                 .foregroundColor(.gray)
                 .padding()
 
-            Text(pelicula.titulo)
+            Text(viewModel.movie.title)
                 .font(.title)
                 .bold()
                 .multilineTextAlignment(.center)
 
-            Text("\(pelicula.anio) • \(pelicula.genero)")
+            Text("\(viewModel.movie.year) • \(viewModel.movie.gender)")
                 .foregroundColor(.gray)
 
-            Text(pelicula.sinopsis)
+            Text(viewModel.movie.sinopsis)
                 .padding()
                 .multilineTextAlignment(.center)
 
             Button(action: {
-                favoritos.alternar(pelicula)
+                favoritesStore.alternate(viewModel.movie)
             }) {
-                Text(esFavorita ? "Quitar de Favoritos" : "Agregar a Favoritos")
+                Text(isFavorite ? "Quitar de Favoritos" : "Agregar a Favoritos")
                     .foregroundColor(.white)
                     .padding()
-                    .background(esFavorita ? Color.red : Color.blue)
+                    .background(isFavorite ? Color.red : Color.blue)
                     .cornerRadius(10)
             }
 
@@ -49,6 +53,6 @@ struct DetallePeliculaView: View {
 }
 
 #Preview {
-    DetallePeliculaView(pelicula: peliculasEjemplo[0])
-        .environment(FavoritosStore())
+    MovieDetailView(movie: ExampleMovies[0])
+        .environment(FavoritesStore())
 }

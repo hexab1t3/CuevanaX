@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct BuscarView: View {
-    @State private var textoBusqueda = ""
+struct FindView: View {
+    @State private var viewModel = FindViewModel()
 
     var body: some View {
         NavigationStack {
@@ -18,7 +18,7 @@ struct BuscarView: View {
                     .bold()
                     .padding()
 
-                TextField("Escribe el nombre de la película...", text: $textoBusqueda)
+                TextField("Escribe el nombre de la película...", text: $viewModel.searchText)
                     .padding()
                     .background(Color(.systemGray2))
                     .cornerRadius(10)
@@ -26,7 +26,7 @@ struct BuscarView: View {
 
                 Spacer()
 
-                if textoBusqueda.isEmpty {
+                if viewModel.filteredMovies.isEmpty {
                     VStack(spacing: 20) {
                         Text("🍿")
                             .font(.system(size: 80))
@@ -34,9 +34,9 @@ struct BuscarView: View {
                             .foregroundColor(.gray)
                     }
                 } else {
-                    List(peliculasEjemplo.filter { $0.titulo.lowercased().contains(textoBusqueda.lowercased()) }) { pelicula in
-                        NavigationLink(value: pelicula) {
-                            Text(pelicula.titulo)
+                    List(viewModel.filteredMovies) { movie in
+                        NavigationLink(value: movie) {
+                            Text(movie.title)
                         }
                     }
                 }
@@ -45,14 +45,14 @@ struct BuscarView: View {
             }
             .navigationTitle("Buscar")
             .toolbar(.hidden, for: .navigationBar)
-            .navigationDestination(for: Pelicula.self) { pelicula in
-                DetallePeliculaView(pelicula: pelicula)
+            .navigationDestination(for: Movie.self) { movie in
+                MovieDetailView(movie: movie)
             }
         }
     }
 }
 
 #Preview {
-    BuscarView()
-        .environment(FavoritosStore())
+    FindView()
+        .environment(FavoritesStore())
 }

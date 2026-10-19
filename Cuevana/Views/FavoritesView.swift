@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct FavoritosView: View {
-    @Environment(FavoritosStore.self) var favoritos
+struct FavoritesView: View {
+    @Environment(FavoritesStore.self) var favoritesStore
 
     var body: some View {
         NavigationStack {
@@ -18,9 +18,9 @@ struct FavoritosView: View {
                     .bold()
                     .padding()
 
-                let favoritas = peliculasEjemplo.filter { favoritos.esFavorita($0) }
+                let favoriteList = favoritesStore.favoriteMovies(from: ExampleMovies)
 
-                if favoritas.isEmpty {
+                if favoriteList.isEmpty {
                     Spacer()
                     VStack(spacing: 20) {
                         Text("💔")
@@ -30,23 +30,23 @@ struct FavoritosView: View {
                     }
                     Spacer()
                 } else {
-                    List(favoritas) { pelicula in
-                        NavigationLink(value: pelicula) {
-                            Text(pelicula.titulo)
+                    List(favoriteList) { movie in
+                        NavigationLink(value: movie) {
+                            Text(movie.title)
                         }
                     }
                 }
             }
             .navigationTitle("Favoritos")
             .toolbar(.hidden, for: .navigationBar)
-            .navigationDestination(for: Pelicula.self) { pelicula in
-                DetallePeliculaView(pelicula: pelicula)
+            .navigationDestination(for: Movie.self) { movie in
+                MovieDetailView(movie: movie)
             }
         }
     }
 }
-
 #Preview {
-    FavoritosView()
-        .environment(FavoritosStore())
-}
+    FavoritesView()
+        .environment(FavoritesStore())
+} 
+

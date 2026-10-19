@@ -7,7 +7,9 @@
 
 import SwiftUI
 
-struct PeliculasView: View {
+struct MoviesView: View {
+    
+    @State private var viewModel = MoviesViewModel()
     var body: some View {
         NavigationStack {
             VStack {
@@ -16,8 +18,8 @@ struct PeliculasView: View {
                     .bold()
                     .padding()
 
-                List(peliculasEjemplo) { pelicula in
-                    NavigationLink(value: pelicula) {
+                List(viewModel.movies) { movie in
+                    NavigationLink(value: movie) {
                         HStack {
                             Image(systemName: "film")
                                 .font(.largeTitle)
@@ -27,9 +29,9 @@ struct PeliculasView: View {
                                 .cornerRadius(8)
 
                             VStack(alignment: .leading, spacing: 5) {
-                                Text(pelicula.titulo)
+                                Text(movie.title)
                                     .font(.headline)
-                                Text("Calificación: \(pelicula.calificacion, specifier: "%.1f")")
+                                Text("Calificación: \(movie.qualification, specifier: "%.1f")")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
                             }
@@ -39,14 +41,14 @@ struct PeliculasView: View {
             }
             .navigationTitle("Películas")
             .toolbar(.hidden, for: .navigationBar)
-            .navigationDestination(for: Pelicula.self) { pelicula in
-                DetallePeliculaView(pelicula: pelicula)
+            .navigationDestination(for: Movie.self) { movie in
+                MovieDetailView(movie: movie)
             }
         }
     }
 }
 
 #Preview {
-    PeliculasView()
-        .environment(FavoritosStore())
+    MoviesView()
+        .environment(FavoritesStore())
 }

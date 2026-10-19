@@ -10,8 +10,8 @@ import SwiftData
 
 @main
 struct CuevanaApp: App {
-    @State private var estaAutenticado = false
-    @State private var favoritos = FavoritosStore()
+    @State private var isAuthenticated = false
+    @State private var favorites = FavoritesStore()
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
@@ -26,11 +26,11 @@ struct CuevanaApp: App {
     }()
     var body: some Scene {
         WindowGroup {
-            if estaAutenticado {
-                MainTabView(estaAutenticado: $estaAutenticado)
-                    .environment(favoritos)
+            if isAuthenticated {
+                MainTabView(isAuthenticated: $isAuthenticated)
+                    .environment(favorites)
             } else {
-                LoginView(estaAutenticado: $estaAutenticado)
+                LoginView(isAuthenticated: $isAuthenticated)
             }
         }
         .modelContainer(sharedModelContainer)
