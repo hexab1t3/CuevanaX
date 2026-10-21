@@ -70,17 +70,24 @@ Debajo de cada frame se listan las etiquetas de accesibilidad (VoiceOver) que la
       </ul>
     </td>
     <td valign="top" width="33%">
-      <h4>[Pantalla 2]</h4>
+      <h4>Vista Películas</h4>
       <ul>
-        <li>[Punto 1]</li>
-        <li>[Punto 2]</li>
+        <li>Entra a la pestaña Películas</li>
+        <li>Le dice el título Películas</li>
+        <li>Le dice el nombre de la película, el año y la calificación</li>
+        <li>Dice que se puede abrir el detalle (Botón)</li>
+        <li>Le dice el menú inferior de 4 opciones: Películas, Buscar, Favoritos y Perfil</li>
       </ul>
     </td>
     <td valign="top" width="33%">
-      <h4>[Pantalla 3]</h4>
+      <h4>Vista Perfil</h4>
       <ul>
-        <li>[Punto 1]</li>
-        <li>[Punto 2]</li>
+        <li>Le dice el título Mi Perfil</li>
+        <li>Le dice el nombre y el correo del usuario</li>
+        <li>Le dice que la sesión está activa</li>
+        <li>Le dice cuántas favoritas y vistas tiene y su género preferido</li>
+        <li>Dice cerrar sesión (Botón)</li>
+        <li>Le dice que está en la pestaña Perfil</li>
       </ul>
     </td>
   </tr>
@@ -95,24 +102,34 @@ Debajo de cada frame se listan las etiquetas de accesibilidad (VoiceOver) que la
   </tr>
   <tr>
     <td valign="top" width="33%">
-      <h4>[Pantalla 1]</h4>
+      <h4>Vista Cargando</h4>
       <ul>
-        <li>[Punto 1]</li>
-        <li>[Punto 2]</li>
+        <li>Le dice el título Películas</li>
+        <li>Le dice que se está cargando la cartelera</li>
+        <li>Le dice que espere mientras se obtienen las películas</li>
+        <li>Le dice que está en la pestaña Películas</li>
       </ul>
     </td>
     <td valign="top" width="33%">
-      <h4>[Pantalla 2]</h4>
+      <h4>Vista Cartelera</h4>
       <ul>
-        <li>[Punto 1]</li>
-        <li>[Punto 2]</li>
+        <li>Le dice el título Películas</li>
+        <li>Le dice la sección En cartelera</li>
+        <li>Le dice el nombre de la película, el año, el género y la calificación</li>
+        <li>Dice que se puede abrir el detalle (Botón)</li>
+        <li>Le dice la sección Populares hoy y sus películas</li>
       </ul>
     </td>
     <td valign="top" width="33%">
-      <h4>[Pantalla 3]</h4>
+      <h4>Vista Detalle</h4>
       <ul>
-        <li>[Punto 1]</li>
-        <li>[Punto 2]</li>
+        <li>Dice regresar a Películas (Botón)</li>
+        <li>Le dice el póster de la película</li>
+        <li>Le dice el título y el año</li>
+        <li>Le dice la calificación, la duración y el género</li>
+        <li>Le dice la fecha de estreno</li>
+        <li>Le lee la sinopsis</li>
+        <li>Dice agregar a favoritos (Botón)</li>
       </ul>
     </td>
   </tr>
@@ -127,24 +144,31 @@ Debajo de cada frame se listan las etiquetas de accesibilidad (VoiceOver) que la
   </tr>
   <tr>
     <td valign="top" width="33%">
-      <h4>[Pantalla 1]</h4>
+      <h4>Vista Buscador</h4>
       <ul>
-        <li>[Punto 1]</li>
-        <li>[Punto 2]</li>
+        <li>Le dice el título Buscar</li>
+        <li>Le dice ¿Qué película buscas? (Campo de texto)</li>
+        <li>Le dice Explora el catálogo</li>
+        <li>Le dice que escriba el título de una película para buscar</li>
       </ul>
     </td>
     <td valign="top" width="33%">
-      <h4>[Pantalla 2]</h4>
+      <h4>Vista Resultados</h4>
       <ul>
-        <li>[Punto 1]</li>
-        <li>[Punto 2]</li>
+        <li>Le dice el título Buscar</li>
+        <li>Le dice el texto escrito en el campo de búsqueda</li>
+        <li>Le dice el nombre de cada resultado, el año, la calificación y el género</li>
+        <li>Dice que se puede abrir el detalle (Botón)</li>
       </ul>
     </td>
     <td valign="top" width="33%">
-      <h4>[Pantalla 3]</h4>
+      <h4>Vista Sin resultados</h4>
       <ul>
-        <li>[Punto 1]</li>
-        <li>[Punto 2]</li>
+        <li>Le dice el título Buscar</li>
+        <li>Le dice el texto escrito en el campo de búsqueda</li>
+        <li>Le dice Sin resultados</li>
+        <li>Le dice que no se encontraron coincidencias para ese texto</li>
+        <li>Le dice que revise la ortografía o busque otro título</li>
       </ul>
     </td>
   </tr>
@@ -159,24 +183,32 @@ Debajo de cada frame se listan las etiquetas de accesibilidad (VoiceOver) que la
   </tr>
   <tr>
     <td valign="top" width="33%">
-      <h4>[Pantalla 1]</h4>
+      <h4>Vista Favoritos vacíos</h4>
       <ul>
-        <li>[Punto 1]</li>
-        <li>[Punto 2]</li>
+        <li>Le dice el título Favoritos</li>
+        <li>Le dice Aún no tienes favoritas</li>
+        <li>Le dice que guarde películas tocando el corazón para verlas aquí</li>
+        <li>Dice explorar cartelera (Botón)</li>
       </ul>
     </td>
     <td valign="top" width="33%">
-      <h4>[Pantalla 2]</h4>
+      <h4>Vista Detalle favorita</h4>
       <ul>
-        <li>[Punto 1]</li>
-        <li>[Punto 2]</li>
+        <li>Dice regresar a Películas (Botón)</li>
+        <li>Le dice el título de la película</li>
+        <li>Le dice que está guardada en favoritos</li>
+        <li>Le lee la sinopsis</li>
+        <li>Dice quitar de favoritos (Botón)</li>
       </ul>
     </td>
     <td valign="top" width="33%">
-      <h4>[Pantalla 3]</h4>
+      <h4>Vista Lista de favoritos</h4>
       <ul>
-        <li>[Punto 1]</li>
-        <li>[Punto 2]</li>
+        <li>Le dice el título Favoritos y cuántas películas tiene</li>
+        <li>Le dice el nombre de cada película, el año, el género y la calificación</li>
+        <li>Le dice que está disponible sin conexión</li>
+        <li>Dice que se puede abrir el detalle (Botón)</li>
+        <li>Le dice que deslice a la izquierda para eliminar</li>
       </ul>
     </td>
   </tr>

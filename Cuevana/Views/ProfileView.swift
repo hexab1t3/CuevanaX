@@ -7,8 +7,11 @@
 
 import SwiftUI
 
-struct PerfilView: View {
-    @Binding var estaAutenticado: Bool
+struct ProfileView: View {
+    @Binding var isAuthenticated: Bool
+    @Environment(FavoritesStore.self) var favoritesStore
+    @State private var viewModel = ProfileViewModel()
+    
 
     var body: some View {
         VStack(spacing: 30) {
@@ -27,10 +30,12 @@ struct PerfilView: View {
                     .bold()
                 Text("usuario@ejemplo.com")
                     .foregroundColor(.gray)
+                Text("Favoritas: \(favoritesStore.ids.count)")
+                    .font(.subheadline)
             }
-
+	
             Button(action: {
-                estaAutenticado = false
+                viewModel.logout(isAuthenticated: &isAuthenticated)
             }) {
                 Text("Cerrar Sesión")
                     .foregroundColor(.white)
@@ -47,6 +52,7 @@ struct PerfilView: View {
 }
 
 #Preview {
-    PerfilView(estaAutenticado: .constant(true))
+    ProfileView(isAuthenticated: .constant(true))
+        .environment(FavoritesStore())
 }
 

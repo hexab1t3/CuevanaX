@@ -8,9 +8,8 @@
 import SwiftUI
 
 struct LoginView: View {
-    @Binding var estaAutenticado: Bool
-    @State private var correo = ""
-    @State private var contrasena = ""
+    @Binding var isAuthenticated: Bool
+    @State private var viewModel = LoginViewModel()
 
     var body: some View {
         VStack(spacing: 30) {
@@ -25,14 +24,14 @@ struct LoginView: View {
                 .bold()
 
             VStack(spacing: 15) {
-                TextField("Correo electrónico", text: $correo)
+                TextField("Correo electrónico", text: $viewModel.mail)
                     .padding()
                     .background(Color(.systemGray6))
                     .cornerRadius(10)
                     .keyboardType(.emailAddress)
                     .autocapitalization(.none)
 
-                SecureField("Contraseña", text: $contrasena)
+                SecureField("Contraseña", text: $viewModel.password)
                     .padding()
                     .background(Color(.systemGray6))
                     .cornerRadius(10)
@@ -40,7 +39,7 @@ struct LoginView: View {
             .padding(.horizontal)
 
             Button(action: {
-                estaAutenticado = true
+                viewModel.login(isAuthenticated: &isAuthenticated)
             }) {
                 Text("Iniciar Sesión")
                     .foregroundColor(.white)
@@ -57,5 +56,5 @@ struct LoginView: View {
 }
 
 #Preview {
-    LoginView(estaAutenticado: .constant(false))
+    LoginView(isAuthenticated: .constant(false))
 }

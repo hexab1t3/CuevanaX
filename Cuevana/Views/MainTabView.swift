@@ -8,29 +8,31 @@
 import SwiftUI
 
 struct MainTabView: View {
-    @Binding var estaAutenticado: Bool
+    @Binding var isAuthenticated: Bool
+    @Environment(FavoritesStore.self) var favorites
 
     var body: some View {
         TabView {
-            PeliculasView()
+            MoviesView()
                 .tabItem {
                     Image(systemName: "film")
                     Text("Películas")
                 }
 
-            BuscarView()
+            FindView()
                 .tabItem {
                     Image(systemName: "magnifyingglass")
                     Text("Buscar")
                 }
 
-            FavoritosView()
+            FavoritesView()
                 .tabItem {
                     Image(systemName: "heart")
                     Text("Favoritos")
                 }
+                .badge(favorites.ids.count)
 
-            PerfilView(estaAutenticado: $estaAutenticado)
+            ProfileView(isAuthenticated: $isAuthenticated)
                 .tabItem {
                     Image(systemName: "person")
                     Text("Perfil")
@@ -40,5 +42,6 @@ struct MainTabView: View {
 }
 
 #Preview {
-    MainTabView(estaAutenticado: .constant(true))
+    MainTabView(isAuthenticated: .constant(true))
+        .environment(FavoritesStore())
 }
