@@ -43,5 +43,5 @@ struct MainTabView: View {
 
 #Preview {
     MainTabView(isAuthenticated: .constant(true))
-        .environment(FavoritesStore())
+        .environment(FavoritesStore(container: FavoritesStore.inMemoryContainer()))
 }

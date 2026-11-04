@@ -6,20 +6,29 @@
 //
 
 import Foundation
+import Observation
 
 @Observable
 class LoginViewModel {
     var mail = ""
     var password = ""
+    var errorMessage: String? = nil
     
-    // Aquí se pueden agregar validaciones futuras si c necesitan (por ejemplo, verificar que el correo no esté vacío)
-    var isValid: Bool {
-        !mail.isEmpty && !password.isEmpty
+    private let authService: AuthServiceProtocol
+    
+    init(authService: AuthServiceProtocol = AuthService.shared) {
+        self.authService = authService
     }
     
+    /// Valida que las credenciales cumplan los requisitos
+    var isValid: Bool {
+        authService.validateCredentials(email: mail, password: password)
+    }
+    
+    /// Ejecuta el proceso de inicio de sesión delegando en el AuthService
     func login(isAuthenticated: inout Bool) {
-        // Lógica de inicio de sesión o validación simulada
+        _ = authService.login(email: mail, password: password)
         isAuthenticated = true
+        errorMessage = nil
     }
 }
-

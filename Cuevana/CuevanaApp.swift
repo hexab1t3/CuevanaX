@@ -12,18 +12,7 @@ import SwiftData
 struct CuevanaApp: App {
     @State private var isAuthenticated = false
     @State private var favorites = FavoritesStore()
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
     var body: some Scene {
         WindowGroup {
             if isAuthenticated {
@@ -33,6 +22,6 @@ struct CuevanaApp: App {
                 LoginView(isAuthenticated: $isAuthenticated)
             }
         }
-        .modelContainer(sharedModelContainer)
+        .modelContainer(FavoritesStore.defaultContainer)
     }
 }
