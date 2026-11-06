@@ -38,6 +38,13 @@ struct LoginView: View {
             }
             .padding(.horizontal)
 
+            if let error = viewModel.errorMessage {
+                Text(error)
+                    .font(.caption)
+                    .foregroundColor(.red)
+                    .padding(.horizontal)
+            }
+
             Button(action: {
                 viewModel.login(isAuthenticated: &isAuthenticated)
             }) {

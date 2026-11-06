@@ -6,6 +6,10 @@
 	objectVersion = 110;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		2F99337B3097B8C500DA00C8 /* WaterfallGrid in Frameworks */ = {isa = PBXBuildFile; productRef = 2F99337A3097B8C500DA00C8 /* WaterfallGrid */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		B4DD879F306A256F0072B65B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -51,6 +55,7 @@
 		B4DD878C306A256E0072B65B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
+				2F99337B3097B8C500DA00C8 /* WaterfallGrid in Frameworks */,
 			);
 		};
 		B4DD879B306A256F0072B65B /* Frameworks */ = {
@@ -66,12 +71,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2F9933793097B89100DA00C8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		B4DD8786306A256E0072B65B = {
 			isa = PBXGroup;
 			children = (
 				B4DD8791306A256E0072B65B /* Cuevana */,
 				B4DD87A1306A256F0072B65B /* CuevanaTests */,
 				B4DD87AB306A256F0072B65B /* CuevanaUITests */,
+				2F9933793097B89100DA00C8 /* Frameworks */,
 				B4DD8790306A256E0072B65B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -103,6 +116,9 @@
 				B4DD8791306A256E0072B65B /* Cuevana */,
 			);
 			name = Cuevana;
+			packageProductDependencies = (
+				2F99337A3097B8C500DA00C8 /* WaterfallGrid */,
+			);
 			productName = Cuevana;
 			productReference = B4DD878F306A256E0072B65B /* Cuevana.app */;
 			productType = "com.apple.product-type.application";
@@ -157,7 +173,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2700;
-				LastUpgradeCheck = 2700;
+				LastUpgradeCheck = 2710;
 				TargetAttributes = {
 					B4DD878E306A256E0072B65B = {
 						CreatedOnToolsVersion = 27.0;
@@ -181,6 +197,9 @@
 			);
 			mainGroup = B4DD8786306A256E0072B65B;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2F9933783097A6B300DA00C8 /* XCRemoteSwiftPackageReference "WaterfallGrid" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B4DD8790306A256E0072B65B /* Products */;
 			projectDirPath = "";
@@ -301,6 +320,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -357,6 +377,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -540,6 +561,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2F9933783097A6B300DA00C8 /* XCRemoteSwiftPackageReference "WaterfallGrid" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/paololeonardi/WaterfallGrid.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2F99337A3097B8C500DA00C8 /* WaterfallGrid */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F9933783097A6B300DA00C8 /* XCRemoteSwiftPackageReference "WaterfallGrid" */;
+			productName = WaterfallGrid;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B4DD8787306A256E0072B65B /* Project object */;
 	validationLevel = 1;

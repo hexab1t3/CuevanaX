@@ -4,6 +4,7 @@
 //
 //  Created by Fernando Miranda on 27/09/26.
 //
+
 import SwiftUI
 
 struct MovieDetailView: View {
@@ -11,41 +12,65 @@ struct MovieDetailView: View {
     @State private var viewModel: MovieDetailViewModel
     
     init(movie: Movie) {
-            _viewModel = State(initialValue: MovieDetailViewModel(movie: movie))
-        }
+        _viewModel = State(initialValue: MovieDetailViewModel(movie: movie))
+    }
 
     var body: some View {
-        let isFavorite = favoritesStore.isFavorite(viewModel.movie)
+        let isFavorite = viewModel.isFavorite(favoritesStore: favoritesStore)
 
-        VStack(spacing: 20) {
-            Image(systemName: "film.fill")
-                .font(.system(size: 100))
-                .foregroundColor(.gray)
-                .padding()
+        ScrollView {
+            VStack(spacing: 20) {
+                
+                // 1. Sustituimos el icono por el póster real usando AsyncImage
+                AsyncImage(url: viewModel.movie.posterURL) { image in
+                    image
+                        .resizable()
+                        .scaledToFit()
+                } placeholder: {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.2))
+                        .aspectRatio(2/3, contentMode: .fit)
+                        .overlay(ProgressView())
+                }
+                .frame(height: 350)
+                .cornerRadius(12)
+                .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4)
+                .padding(.top)
 
-            Text(viewModel.movie.title)
-                .font(.title)
-                .bold()
-                .multilineTextAlignment(.center)
+                // 2. Título de la película
+                Text(viewModel.movie.title)
+                    .font(.title)
+                    .bold()
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
 
-            Text("\(viewModel.movie.year) • \(viewModel.movie.gender)")
-                .foregroundColor(.gray)
+                // 3. Metadatos formateados provistos por el ViewModel
+                Text(viewModel.formattedMetadata)
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
 
-            Text(viewModel.movie.sinopsis)
-                .padding()
-                .multilineTextAlignment(.center)
-
-            Button(action: {
-                favoritesStore.alternate(viewModel.movie)
-            }) {
-                Text(isFavorite ? "Quitar de Favoritos" : "Agregar a Favoritos")
-                    .foregroundColor(.white)
+                // 4. Sinopsis
+                Text(viewModel.movie.sinopsis)
+                    .font(.body)
                     .padding()
-                    .background(isFavorite ? Color.red : Color.blue)
-                    .cornerRadius(10)
-            }
+                    .multilineTextAlignment(.center)
 
-            Spacer()
+                // 5. Botón de Favoritos
+                Button(action: {
+                    viewModel.toggleFavorite(favoritesStore: favoritesStore)
+                }) {
+                    Text(viewModel.buttonTitle(isFavorite: isFavorite))
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(isFavorite ? Color.red : Color.blue)
+                        .cornerRadius(10)
+                }
+                .padding(.horizontal)
+
+                Spacer()
+            }
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.visible, for: .navigationBar)
@@ -54,5 +79,5 @@ struct MovieDetailView: View {
 
 #Preview {
     MovieDetailView(movie: ExampleMovies[0])
-        .environment(FavoritesStore())
+        .environment(FavoritesStore(container: FavoritesStore.inMemoryContainer()))
 }
