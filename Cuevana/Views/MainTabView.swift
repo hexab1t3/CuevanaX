@@ -13,31 +13,24 @@ struct MainTabView: View {
 
     var body: some View {
         TabView {
-            MoviesView()
-                .tabItem {
-                    Image(systemName: "film")
-                    Text("Películas")
-                }
+            Tab("Películas", systemImage: "film") {
+                MoviesView()
+            }
 
-            FindView()
-                .tabItem {
-                    Image(systemName: "magnifyingglass")
-                    Text("Buscar")
-                }
+            Tab("Favoritos", systemImage: "heart") {
+                FavoritesView()
+            }
 
-            FavoritesView()
-                .tabItem {
-                    Image(systemName: "heart")
-                    Text("Favoritos")
-                }
-                .badge(favorites.ids.count)
+            Tab("Perfil", systemImage: "person") {
+                ProfileView(isAuthenticated: $isAuthenticated)
+            }
 
-            ProfileView(isAuthenticated: $isAuthenticated)
-                .tabItem {
-                    Image(systemName: "person")
-                    Text("Perfil")
-                }
+            Tab("Buscar", systemImage: "magnifyingglass", role: .search) {
+                FindView()
+            }
         }
+        .tabBarMinimizeBehavior(.onScrollDown)
+        .tint(Theme.amber)
     }
 }
 

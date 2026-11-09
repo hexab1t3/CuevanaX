@@ -25,7 +25,7 @@ Una vez autenticado, la app muestra cuatro secciones accesibles desde el menú d
 
 1. Clona el repositorio
 2. Abre el proyecto en Xcode
-3. Agrega tu API key de TMDB en el archivo de configuración
+3. Copia `Cuevana/Secrets.plist.example` como `Cuevana/Secrets.plist` y pon tu token de lectura (Bearer) de TMDB en `TMDB_BEARER_TOKEN`. `Secrets.plist` está en `.gitignore`: nunca lo subas. También puedes definir la variable de entorno `TMDB_BEARER_TOKEN` en el esquema de Xcode. Sin token, la app muestra el estado de error con un mensaje que lo explica.
 4. Corre la app en el simulador o en un dispositivo físico
 
 ## Alcance

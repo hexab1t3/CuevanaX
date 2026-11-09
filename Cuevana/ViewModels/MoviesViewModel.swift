@@ -8,56 +8,80 @@ import Observation
 
 @Observable
 class MoviesViewModel {
-    var movies: [Movie] = []
-    var isLoading: Bool = false
-    var isLoadingMore: Bool = false
-    var errorMessage: String? = nil
-    
+
+    enum ViewState: Equatable {
+        case idle
+        case loading
+        case content([Movie])
+        case empty
+        case error(String)
+    }
+
+    // Única fuente de verdad para el estado de la consulta
+    private(set) var state: ViewState = .idle
+    private(set) var isLoadingMore: Bool = false
+    private(set) var loadMoreErrorMessage: String? = nil
+
+    var movies: [Movie] {
+        if case .content(let list) = state { return list }
+        return []
+    }
+
     private var currentPage = 1
     private let service: MovieServiceProtocol
-    
+
     init(service: MovieServiceProtocol = MovieServices()) {
         self.service = service
-        Task {
-            await loadMovies()
-        }
     }
-    
+
+    @MainActor
+    func loadIfNeeded() async {
+        guard state == .idle else { return }
+        await loadMovies()
+    }
+
     @MainActor
     func loadMovies() async {
-        guard !isLoading else { return }
-        isLoading = true
-        errorMessage = nil
+        guard state != .loading else { return }
+        state = .loading
+        loadMoreErrorMessage = nil
         currentPage = 1
-        
+
         do {
-            self.movies = try await service.fetchPopularMovies(page: currentPage)
+            let fetched = try await service.fetchPopularMovies(page: currentPage)
+            state = fetched.isEmpty ? .empty : .content(fetched)
+        } catch is CancellationError {
+            state = .idle
         } catch {
-            self.errorMessage = error.localizedDescription
-            print("Error al cargar películas: \(error.localizedDescription)")
+            state = .error(error.localizedDescription)
         }
-        
-        isLoading = false
     }
-    
-    // Función para cargar la siguiente página (paginación infinita)
+
     @MainActor
-    func loadMoreMoviesIfNeeded(currentMovie movie: Movie) async {
-        guard let lastMovie = movies.last, lastMovie.id == movie.id, !isLoadingMore else {
-            return
-        }
-        
+    func retry() async {
+        await loadMovies()
+    }
+
+    // Función para cargar la siguiente página
+    @MainActor
+    func loadMoreMovies() async {
+        guard case .content(let current) = state, !isLoadingMore else { return }
+
         isLoadingMore = true
-        currentPage += 1
-        
+        loadMoreErrorMessage = nil
+        let nextPage = currentPage + 1
+
         do {
-            let moreMovies = try await service.fetchPopularMovies(page: currentPage)
-            self.movies.append(contentsOf: moreMovies)
+            let more = try await service.fetchPopularMovies(page: nextPage)
+            currentPage = nextPage
+            // TMDB puede repetir películas entre páginas
+            let knownIDs = Set(current.map(\.id))
+            state = .content(current + more.filter { !knownIDs.contains($0.id) })
+        } catch is CancellationError {
         } catch {
-            print("Error al cargar más películas: \(error.localizedDescription)")
-            currentPage -= 1 // Revertir el incremento si falla
+            loadMoreErrorMessage = error.localizedDescription
         }
-        
+
         isLoadingMore = false
     }
 }
