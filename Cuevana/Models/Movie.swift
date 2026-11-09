@@ -19,11 +19,23 @@ struct Movie: Identifiable, Codable, Hashable {
     var sinopsis: String
     var tmdbId: Int?
     var posterPath: String?
+    var backdropPath: String?
     
     // Propiedad calculada para la URL del póster en TMDB
     var posterURL: URL? {
         guard let posterPath = posterPath else { return nil }
         return URL(string: "https://image.tmdb.org/t/p/w500\(posterPath)")
+    }
+
+    // Imagen horizontal de la película, usada en el carrusel y los fondos
+    var backdropURL: URL? {
+        guard let backdropPath = backdropPath else { return nil }
+        return URL(string: "https://image.tmdb.org/t/p/w780\(backdropPath)")
+    }
+
+    // Identificador que no cambia aunque la película venga de favoritos
+    var stableID: String {
+        tmdbId.map(String.init) ?? id.uuidString
     }
 
     init(
@@ -36,7 +48,8 @@ struct Movie: Identifiable, Codable, Hashable {
         premiereDate: String,
         sinopsis: String,
         tmdbId: Int? = nil,
-        posterPath: String? = nil
+        posterPath: String? = nil,
+        backdropPath: String? = nil
     ) {
         self.id = id
         self.title = title
@@ -48,6 +61,7 @@ struct Movie: Identifiable, Codable, Hashable {
         self.sinopsis = sinopsis
         self.tmdbId = tmdbId
         self.posterPath = posterPath
+        self.backdropPath = backdropPath
     }
 }
 

@@ -10,9 +10,32 @@ import Observation
 
 @Observable
 class FavoritesViewModel {
-    var movies: [Movie] = []
-    var isLoading: Bool = false
-    var errorMessage: String? = nil
+    
+    // Enum con los diferentes estados de la vista según las recomendaciones del profesor
+    enum State: Equatable {
+        case idle
+        case loading
+        case loaded([Movie])
+        case error(String)
+    }
+    
+    // Variable de estado que unifica el ciclo de vida de la vista
+    var state: State = .idle
+    
+    // Propiedades computadas de conveniencia
+    var movies: [Movie] {
+        if case .loaded(let list) = state { return list }
+        return []
+    }
+    
+    var isLoading: Bool {
+        state == .loading
+    }
+    
+    var errorMessage: String? {
+        if case .error(let message) = state { return message }
+        return nil
+    }
     
     private let service: MovieServiceProtocol
     private var favoritesStore: FavoritesStore?
@@ -27,15 +50,14 @@ class FavoritesViewModel {
     
     @MainActor
     func loadMovies() async {
-        isLoading = true
-        errorMessage = nil
+        state = .loading
         do {
-            self.movies = try await service.fetchPopularMovies(page: 1)
+            let fetchedMovies = try await service.fetchPopularMovies(page: 1)
+            state = .loaded(fetchedMovies)
         } catch {
             print("Error al cargar películas para favoritos: \(error.localizedDescription)")
-            self.errorMessage = error.localizedDescription
+            state = .error(error.localizedDescription)
         }
-        isLoading = false
     }
     
     // Consulta si una película está marcada como favorita
@@ -62,7 +84,7 @@ class FavoritesViewModel {
     func getFavoriteMovies(from list: [Movie]? = nil, store: FavoritesStore? = nil) -> [Movie] {
         let activeStore = store ?? favoritesStore
         guard let activeStore = activeStore else { return [] }
-        
+         
         if let list = list, !list.isEmpty {
             return activeStore.favoriteMovies(from: list)
         } else {

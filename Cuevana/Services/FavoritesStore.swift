@@ -36,7 +36,7 @@ class FavoritesStore {
         return try! ModelContainer(for: schema, configurations: [config])
     }
 
-    @MainActor
+
     init(container: ModelContainer = FavoritesStore.defaultContainer) {
         self.modelContainer = container
         fetchItems()

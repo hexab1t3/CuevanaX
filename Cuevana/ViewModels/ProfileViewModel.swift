@@ -15,7 +15,7 @@ class ProfileViewModel {
     
     private let authService: AuthServiceProtocol
     
-    init(authService: AuthServiceProtocol = AuthService.shared) {
+    init(authService: AuthServiceProtocol = AuthService()) {
         self.authService = authService
     }
     

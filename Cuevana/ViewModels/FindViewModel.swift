@@ -8,68 +8,76 @@ import Observation
 
 @Observable
 class FindViewModel {
+
+    enum ViewState: Equatable {
+        case idle
+        case loading
+        case results([Movie])
+        case empty
+        case error(String)
+    }
+
+    private(set) var state: ViewState = .idle
+
     var searchText = "" {
         didSet {
-            updateFilteredMoviesSync()
-            searchTask?.cancel()
-            searchTask = Task {
-                await performSearch(for: searchText)
-            }
+            guard searchText != oldValue else { return }
+            scheduleSearch()
         }
     }
-    
-    var filteredMovies: [Movie] = []
-    var isLoading: Bool = false
-    var errorMessage: String? = nil
-    
-    private let service: MovieServiceProtocol
-    private var searchTask: Task<Void, Never>? = nil
-    
-    init(service: MovieServiceProtocol = MovieServices()) {
-        self.service = service
+
+    var filteredMovies: [Movie] {
+        if case .results(let list) = state { return list }
+        return []
     }
-    
-    /// Búsqueda síncrona inmediata sobre el catálogo local (útil para pruebas unitarias y retroalimentación instantánea)
-    private func updateFilteredMoviesSync() {
-        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !query.isEmpty else {
-            filteredMovies = []
+
+    private let service: MovieServiceProtocol
+    private let debounceNanoseconds: UInt64
+    private var searchTask: Task<Void, Never>? = nil
+
+    init(service: MovieServiceProtocol = MovieServices(), debounceNanoseconds: UInt64 = 300_000_000) {
+        self.service = service
+        self.debounceNanoseconds = debounceNanoseconds
+    }
+
+    // Breve pausa para evitar saturar la API mientras el usuario teclea
+    private func scheduleSearch() {
+        searchTask?.cancel()
+        let query = searchText
+        if query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            state = .idle
             return
         }
-        let matches = ExampleMovies.filter { $0.title.localizedCaseInsensitiveContains(query) }
-        filteredMovies = matches
+        searchTask = Task { [debounceNanoseconds] in
+            try? await Task.sleep(nanoseconds: debounceNanoseconds)
+            guard !Task.isCancelled else { return }
+            await performSearch(for: query)
+        }
     }
-    
+
     @MainActor
     func performSearch(for query: String) async {
         let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        if trimmedQuery.isEmpty {
-            self.filteredMovies = []
-            self.isLoading = false
+        guard !trimmedQuery.isEmpty else {
+            state = .idle
             return
         }
-        
-        isLoading = true
-        errorMessage = nil
-        
-        // Breve pausa para evitar saturar la API mientras el usuario teclea
-        try? await Task.sleep(nanoseconds: 300_000_000)
-        
-        guard !Task.isCancelled else { return }
-        
+
+        state = .loading
+
         do {
             let results = try await service.searchMovies(query: trimmedQuery)
-            if !Task.isCancelled {
-                // Si la API devuelve resultados, los usamos; si no, conservamos los resultados locales si coincidieron
-                if !results.isEmpty || filteredMovies.isEmpty {
-                    self.filteredMovies = results
-                }
-            }
+            guard !Task.isCancelled else { return }
+            state = results.isEmpty ? .empty : .results(results)
+        } catch is CancellationError {
         } catch {
-            print("Error al buscar películas: \(error.localizedDescription)")
-            self.errorMessage = error.localizedDescription
+            guard !Task.isCancelled else { return }
+            state = .error(error.localizedDescription)
         }
-        
-        isLoading = false
+    }
+
+    @MainActor
+    func retry() async {
+        await performSearch(for: searchText)
     }
 }

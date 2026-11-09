@@ -16,7 +16,6 @@ protocol AuthServiceProtocol {
 
 /// Servicio que gestiona la lógica de autenticación y sesión
 class AuthService: AuthServiceProtocol {
-    static let shared = AuthService()
 
     init() {}
 

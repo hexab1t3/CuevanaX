@@ -11,11 +11,12 @@ struct FavoritesView: View {
     // Store con SwiftData inyectado desde el entorno
     @Environment(FavoritesStore.self) var favoritesStore
     @State private var viewModel = FavoritesViewModel()
+    @Namespace private var zoomNamespace
 
-    // Colores del tema
-    private let deepNavyBackground = Color(red: 0.04, green: 0.06, blue: 0.12)
-    private let cardBackground = Color(red: 0.08, green: 0.12, blue: 0.20)
-    private let amberAccent = Color(red: 1.0, green: 0.75, blue: 0.0)
+    private let columns = [
+        GridItem(.flexible(), spacing: 14),
+        GridItem(.flexible(), spacing: 14)
+    ]
 
     var body: some View {
         // Lista de favoritos guardada localmente
@@ -23,75 +24,74 @@ struct FavoritesView: View {
 
         NavigationStack {
             ZStack {
-                deepNavyBackground
-                    .ignoresSafeArea()
+                AmbientBackground()
 
-                VStack {
-                    Text("Tus Favoritos")
-                        .font(.title2)
-                        .bold()
-                        .foregroundColor(.white)
-                        .padding()
+                VStack(alignment: .leading, spacing: 16) {
+                    HStack(alignment: .firstTextBaseline) {
+                        Text("Tus Favoritos")
+                            .font(.largeTitle.bold())
+                            .foregroundStyle(.white)
 
-                    if favoriteList.isEmpty {
                         Spacer()
-                        VStack(spacing: 20) {
-                            Text("💔")
-                                .font(.system(size: 80))
-                            Text("No tienes películas favoritas")
-                                .foregroundColor(.gray)
-                        }
-                        Spacer()
+
+                        Text("\(favoriteList.count)")
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                            .contentTransition(.numericText(value: Double(favoriteList.count)))
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 6)
+                            .glassEffect(.regular.tint(Theme.coral.opacity(0.4)), in: .capsule)
+                    }
+                    .padding(.horizontal)
+
+                    if viewModel.state == .loading && favoriteList.isEmpty {
+                        ProgressView("Cargando...")
+                            .tint(Theme.amber)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else if case .error(let errorMsg) = viewModel.state, favoriteList.isEmpty {
+                        StatusMessageView(
+                            icon: "exclamationmark.triangle",
+                            title: "Algo salió mal",
+                            message: errorMsg
+                        )
+                    } else if favoriteList.isEmpty {
+                        StatusMessageView(
+                            icon: "heart.slash",
+                            title: "No tienes películas favoritas",
+                            message: "Toca el corazón en cualquier película para guardarla aquí."
+                        )
                     } else {
-                        List {
-                            ForEach(favoriteList) { movie in
-                                NavigationLink(value: movie) {
-                                    HStack(spacing: 12) {
-                                        AsyncImage(url: movie.posterURL) { image in
-                                            image
-                                                .resizable()
-                                                .scaledToFill()
-                                        } placeholder: {
-                                            Color.gray.opacity(0.3)
-                                        }
-                                        .frame(width: 50, height: 75)
-                                        .cornerRadius(6)
-                                        .clipped()
-
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(movie.title)
-                                                .font(.headline)
-                                                .foregroundColor(.white)
-                                            
-                                            HStack(spacing: 4) {
-                                                Image(systemName: "star.fill")
-                                                    .font(.caption)
-                                                    .foregroundColor(amberAccent)
-                                                
-                                                Text(String(format: "%.1f", movie.qualification))
-                                                    .font(.subheadline)
-                                                    .foregroundColor(.gray)
-                                            }
+                        ScrollView {
+                            LazyVGrid(columns: columns, spacing: 14) {
+                                ForEach(favoriteList, id: \.stableID) { movie in
+                                    NavigationLink(value: movie) {
+                                        MovieCardView(movie: movie)
+                                            .matchedTransitionSource(id: movie.stableID, in: zoomNamespace)
+                                    }
+                                    .buttonStyle(.plain)
+                                    .contextMenu {
+                                        Button("Quitar de Favoritos", systemImage: "heart.slash", role: .destructive) {
+                                            viewModel.removeFavorite(movie: movie, store: favoritesStore)
                                         }
                                     }
-                                }
-                                .listRowBackground(cardBackground)
-                            }
-                            .onDelete { indexSet in
-                                for index in indexSet {
-                                    let movie = favoriteList[index]
-                                    viewModel.removeFavorite(movie: movie, store: favoritesStore)
+                                    .transition(.scale.combined(with: .opacity))
                                 }
                             }
+                            .padding(.horizontal)
+                            .padding(.bottom)
                         }
-                        .scrollContentBackground(.hidden)
+                        .scrollIndicators(.hidden)
                     }
                 }
+                .padding(.top)
+                .animation(.smooth, value: favoriteList.map(\.stableID))
             }
             .navigationTitle("Favoritos")
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: Movie.self) { movie in
                 MovieDetailView(movie: movie)
+                    .navigationTransition(.zoom(sourceID: movie.stableID, in: zoomNamespace))
             }
         }
         .preferredColorScheme(.dark)

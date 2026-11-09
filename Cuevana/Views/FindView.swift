@@ -9,91 +9,151 @@ import SwiftUI
 
 struct FindView: View {
     @State private var viewModel = FindViewModel()
-
-    // Colores personalizados del tema
-    private let deepNavyBackground = Color(red: 0.04, green: 0.06, blue: 0.12)
-    private let cardBackground = Color(red: 0.08, green: 0.12, blue: 0.20)
-    private let amberAccent = Color(red: 1.0, green: 0.75, blue: 0.0)
+    @Namespace private var zoomNamespace
 
     var body: some View {
         NavigationStack {
             ZStack {
-                // Fondo azul marino profundo
-                deepNavyBackground
-                    .ignoresSafeArea()
+                AmbientBackground()
 
-                VStack {
+                VStack(alignment: .leading, spacing: 16) {
                     Text("Buscar Películas")
-                        .font(.title2)
-                        .bold()
-                        .foregroundColor(.white)
-                        .padding()
-
-                    TextField("Escribe el nombre de la película...", text: $viewModel.searchText)
-                        .padding()
-                        .background(cardBackground)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
+                        .font(.largeTitle.bold())
+                        .foregroundStyle(.white)
                         .padding(.horizontal)
 
-                    Spacer()
+                    searchField
 
-                    if viewModel.filteredMovies.isEmpty {
-                        VStack(spacing: 20) {
-                            Text("🍿")
-                                .font(.system(size: 80))
-                            Text("Busca una película")
-                                .foregroundColor(.gray)
-                        }
-                    } else {
-                        List(viewModel.filteredMovies) { movie in
-                            NavigationLink(value: movie) {
-                                HStack(spacing: 12) {
-                                    // Miniatura del póster
-                                    AsyncImage(url: movie.posterURL) { image in
-                                        image
-                                            .resizable()
-                                            .scaledToFill()
-                                    } placeholder: {
-                                        Color.gray.opacity(0.3)
-                                    }
-                                    .frame(width: 45, height: 70)
-                                    .cornerRadius(6)
-                                    .clipped()
-
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text(movie.title)
-                                            .font(.headline)
-                                            .foregroundColor(.white)
-                                        
-                                        // Estrellita en color ámbar
-                                        HStack(spacing: 4) {
-                                            Image(systemName: "star.fill")
-                                                .font(.caption)
-                                                .foregroundColor(amberAccent)
-                                            
-                                            Text(String(format: "%.1f", movie.qualification))
-                                                .font(.subheadline)
-                                                .foregroundColor(.gray)
-                                        }
-                                    }
-                                }
+                    Group {
+                        switch viewModel.state {
+                        case .idle:
+                            StatusMessageView(
+                                icon: "sparkle.magnifyingglass",
+                                title: "Busca una película",
+                                message: "Escribe un título para buscar en todo el catálogo de TMDB."
+                            )
+                        case .loading:
+                            ProgressView("Buscando...")
+                                .tint(Theme.amber)
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        case .empty:
+                            StatusMessageView(
+                                icon: "magnifyingglass",
+                                title: "Sin resultados para \"\(viewModel.searchText)\"",
+                                message: "Prueba con otro título."
+                            )
+                        case .error(let message):
+                            StatusMessageView(
+                                icon: "wifi.exclamationmark",
+                                title: "No pudimos completar la búsqueda",
+                                message: message,
+                                buttonTitle: "Reintentar"
+                            ) {
+                                Task { await viewModel.retry() }
                             }
-                            .listRowBackground(cardBackground)
+                        case .results(let movies):
+                            resultsList(movies)
                         }
-                        .scrollContentBackground(.hidden)
                     }
-
-                    Spacer()
+                    .transition(.opacity)
                 }
+                .padding(.top)
+                .animation(.smooth, value: viewModel.state)
             }
             .navigationTitle("Buscar")
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: Movie.self) { movie in
                 MovieDetailView(movie: movie)
+                    .navigationTransition(.zoom(sourceID: movie.id, in: zoomNamespace))
             }
         }
         .preferredColorScheme(.dark)
+    }
+
+    private var searchField: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(.secondary)
+
+            TextField("Escribe el nombre de la película...", text: $viewModel.searchText)
+                .foregroundStyle(.white)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .submitLabel(.search)
+
+            if !viewModel.searchText.isEmpty {
+                Button {
+                    viewModel.searchText = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.secondary)
+                }
+                .transition(.scale.combined(with: .opacity))
+                .accessibilityLabel("Borrar búsqueda")
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .glassEffect(.regular.interactive(), in: .capsule)
+        .padding(.horizontal)
+        .animation(.snappy, value: viewModel.searchText.isEmpty)
+    }
+
+    private func resultsList(_ movies: [Movie]) -> some View {
+        ScrollView {
+            LazyVStack(spacing: 12) {
+                ForEach(movies) { movie in
+                    NavigationLink(value: movie) {
+                        resultRow(movie)
+                    }
+                    .buttonStyle(.plain)
+                    .scrollTransition { content, phase in
+                        content
+                            .opacity(phase.isIdentity ? 1 : 0.4)
+                            .scaleEffect(phase.isIdentity ? 1 : 0.96)
+                    }
+                }
+            }
+            .padding(.horizontal)
+            .padding(.bottom)
+        }
+        .scrollIndicators(.hidden)
+        .scrollDismissesKeyboard(.immediately)
+    }
+
+    private func resultRow(_ movie: Movie) -> some View {
+        HStack(spacing: 14) {
+            Color.clear
+                .frame(width: 64, height: 96)
+                .overlay {
+                    MovieImageView(url: movie.posterURL)
+                }
+                .clipShape(.rect(cornerRadius: 12))
+                .matchedTransitionSource(id: movie.id, in: zoomNamespace)
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text(movie.title)
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .lineLimit(2)
+
+                Text(String(movie.year))
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                RatingBadge(rating: movie.qualification)
+            }
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .font(.footnote.bold())
+                .foregroundStyle(.tertiary)
+        }
+        .padding(10)
+        .background(.ultraThinMaterial, in: .rect(cornerRadius: 20))
+        .contentShape(.rect(cornerRadius: 20))
     }
 }
 

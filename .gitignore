@@ -1,0 +1,16 @@
+# Archivos de configuración con secretos y llaves de API
+Secrets.plist
+*.private.plist
+
+# Archivos del sistema y Xcode
+.DS_Store
+xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+DerivedData/
+build/
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcuserstate
+.swiftpm/xcode/package.resolved
