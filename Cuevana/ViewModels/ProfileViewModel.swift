@@ -15,13 +15,19 @@ class ProfileViewModel {
     
     private let authService: AuthServiceProtocol
     
-    init(authService: AuthServiceProtocol = AuthService.shared) {
+    init(authService: AuthServiceProtocol = AuthService()) {
         self.authService = authService
     }
     
     /// Obtiene la cantidad de películas favoritas registradas
     func favoritesCount(favoritesStore: FavoritesStore) -> Int {
         favoritesStore.ids.count
+    }
+
+    /// Texto del contador: el número, o "+99" si hay más de 99
+    func favoritesCountText(favoritesStore: FavoritesStore) -> String {
+        let count = favoritesCount(favoritesStore: favoritesStore)
+        return count > 99 ? "+99" : "\(count)"
     }
     
     /// Cierra la sesión activa a través del servicio y actualiza el estado

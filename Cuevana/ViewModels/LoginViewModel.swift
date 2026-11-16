@@ -16,7 +16,7 @@ class LoginViewModel {
     
     private let authService: AuthServiceProtocol
     
-    init(authService: AuthServiceProtocol = AuthService.shared) {
+    init(authService: AuthServiceProtocol = AuthService()) {
         self.authService = authService
     }
     
@@ -25,10 +25,14 @@ class LoginViewModel {
         authService.validateCredentials(email: mail, password: password)
     }
     
-    /// Ejecuta el proceso de inicio de sesión delegando en el AuthService
+    /// Ejecuta la acción de inicio de sesión delegando en el AuthService
     func login(isAuthenticated: inout Bool) {
-        _ = authService.login(email: mail, password: password)
-        isAuthenticated = true
-        errorMessage = nil
+        if authService.login(email: mail, password: password) {
+            isAuthenticated = true
+            errorMessage = nil
+        } else {
+            isAuthenticated = false
+            errorMessage = "Credenciales inválidas. Por favor verifique correo y contraseña."
+        }
     }
 }

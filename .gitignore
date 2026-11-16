@@ -1,0 +1,13 @@
+# Archivos de configuración con secretos y llaves de API
+Secrets.plist
+*.private.plist
+
+# Archivos del sistema y Xcode
+.DS_Store
+xcuserdata/
+DerivedData/
+build/
+*.xcuserstate
+
+# Respaldos locales que no forman parte de la entrega
+_to_delete/

@@ -1,247 +1,161 @@
 # CuevanaX
 
-# Proyecto Integrador — App de Películas iOS
+App de iOS para explorar películas en cartelera, buscarlas por nombre y guardar tus favoritas, usando la API de TMDB.
 
-App de iOS para consultar películas usando la API de TMDB. Proyecto de la materia Desarrollo iOS en FCA UNAM.
+## Descripción
 
-## Flujo principal
+Cuando alguien quiere ver una película normalmente busca en varios sitios para saber qué hay en cartelera, de qué trata y si vale la pena. CuevanaX junta eso en una sola app: muestra las películas populares del momento, permite buscar cualquier título del catálogo de TMDB y guardar las que te interesan para verlas después, incluso sin conexión.
 
-Al abrir la app lo primero que ve el usuario es la pantalla de login. Ahí ingresa su correo y contraseña para entrar.
+## Funcionalidades
 
-Una vez autenticado, la app muestra cuatro secciones accesibles desde el menú de abajo:
-
-1. **Películas** — pantalla principal con las películas en cartelera. Se muestran en una lista con póster, título y calificación. Al tocar una película se abre el detalle con sinopsis, género y más información.
-2. **Buscar** — campo de búsqueda para encontrar cualquier película por nombre. Los resultados aparecen en tiempo real mientras el usuario escribe.
-3. **Favoritos** — aquí se guardan las películas que el usuario marcó como favoritas desde el detalle. Se pueden quitar en cualquier momento.
-4. **Perfil** — muestra el nombre y correo del usuario. Desde aquí se puede cerrar sesión, lo que regresa a la pantalla de login.
-
-## Requisitos
-
-- Xcode 15 o superior
-- iOS 16+
-- API key de [themoviedb.org](https://www.themoviedb.org/)
-
-## Cómo correrlo
-
-1. Clona el repositorio
-2. Abre el proyecto en Xcode
-3. Agrega tu API key de TMDB en el archivo de configuración
-4. Corre la app en el simulador o en un dispositivo físico
-
-## Alcance
-
-El proyecto incluye:
-
-- Login con correo y contraseña
-- Catálogo de películas en cartelera (desde TMDB)
-- Búsqueda por nombre
-- Guardado de favoritos de forma local
-- Perfil con cierre de sesión
-
-No incluye registro de nuevos usuarios ni pagos. Solo lo definido para el proyecto integrador.
+- **Login** con correo y contraseña. Si algún campo está vacío muestra un mensaje de error.
+- **Películas en cartelera**: carrusel con las 5 películas en tendencia y un grid tipo Pinterest con las populares. Botón "Cargar más" para traer la siguiente página.
+- **Detalle de película**: póster, año, género, calificación, sinopsis y botón para agregar o quitar de favoritos.
+- **Búsqueda** en todo el catálogo de TMDB mientras escribes.
+- **Favoritos** guardados en el teléfono con SwiftData. Se mantienen al cerrar la app y se quitan manteniendo presionada la película.
+- **Perfil** con el número de favoritas y botón para cerrar sesión.
+- Estados de carga, vacío y error con botón de reintentar.
 
 ## Tecnologías
 
-- Swift / SwiftUI
-- TMDB API
-- UserDefaults para favoritos
+- Swift y SwiftUI
+- Arquitectura MVVM con `@Observable`
+- [TMDB API](https://developer.themoviedb.org/docs)
+- SwiftData para los favoritos
+- [WaterfallGrid](https://github.com/paololeonardi/WaterfallGrid) 1.1.0 (Swift Package Manager)
+- PixelKit (carpeta `PixelKit`): paquete local con el fondo mosaico pixel
+- Fuente Pixelify Sans (licencia OFL) en `Cuevana/Fonts`
+- XCTest para pruebas unitarias y de UI
 
-## Frames y accesibilidad
+## Requisitos
 
-Debajo de cada frame se listan las etiquetas de accesibilidad (VoiceOver) que la app le dice a las personas con discapacidad visual en cada pantalla, en orden.
+- Mac con Xcode 26 o superior
+- Simulador o iPhone con iOS 26 o superior
+- Conexión a internet
+- Una cuenta gratuita de [TMDB](https://www.themoviedb.org/signup) para obtener el token de la API
 
-<!-- Grupo de Imágenes 1 -->
+## Instalación y configuración
+
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/hexab1t3/CuevanaX.git
+   ```
+2. Abre `Cuevana.xcodeproj` en Xcode. La primera vez Xcode descarga WaterfallGrid solo.
+3. Configura el token de TMDB (siguiente sección).
+
+## Configuración de servicios externos (TMDB)
+
+La app necesita un **token de lectura (Bearer)** de TMDB. El token **no está en el repositorio**.
+
+1. En tu cuenta de TMDB ve a **Ajustes → API** y copia el *API Read Access Token*.
+2. Copia el archivo de ejemplo:
+   ```bash
+   cp Cuevana/Secrets.plist.example Cuevana/Secrets.plist
+   ```
+3. Abre `Cuevana/Secrets.plist` y reemplaza `TU_TOKEN_BEARER_AQUI` por tu token.
+
+`Secrets.plist` está en `.gitignore`, así que no se sube a GitHub. También puedes usar la variable de entorno `TMDB_BEARER_TOKEN` en el esquema de Xcode. Sin token la app muestra la pantalla de error.
+
+## Ejecución
+
+1. En Xcode elige un simulador de iPhone con iOS 26 o superior.
+2. Presiona **Cmd + R**.
+3. En el login escribe cualquier correo y contraseña (solo se valida que no estén vacíos).
+
+Para correr las pruebas presiona **Cmd + U**.
+
+## Capturas y accesibilidad
+
+Capturas de la versión final. Debajo de cada una se listan, en orden, los elementos que VoiceOver le lee a las personas con discapacidad visual en esa pantalla.
+
 <table>
   <tr>
-    <td colspan="3" align="center">
-      <img src="https://github.com/user-attachments/assets/28d000ec-fc34-49a0-99da-599b27af5203" width="100%" />
-    </td>
-  </tr>
-  <tr>
     <td valign="top" width="33%">
+      <img src="Docs/screenshots/01-login.png" alt="Vista Login" width="100%" />
       <h4>Vista Login</h4>
       <ul>
-        <li>Entra a la app</li>
-        <li>Le dice el título de la app</li>
-        <li>Le dice ingresa Correo</li>
-        <li>Le dice ingresa Contraseña</li>
+        <li>Le dice el logo: CuevanaX</li>
+        <li>Le dice el nombre de la app y la frase «Tu cine favorito, siempre contigo»</li>
+        <li>Le dice Correo electrónico (Campo de texto)</li>
+        <li>Le dice Contraseña (Campo de texto seguro)</li>
+        <li>Dice mostrar contraseña (Botón)</li>
         <li>Dice iniciar sesión (Botón)</li>
-        <li>Si no tienes cuenta regístrate</li>
       </ul>
     </td>
     <td valign="top" width="33%">
+      <img src="Docs/screenshots/02-peliculas.png" alt="Vista Películas" width="100%" />
       <h4>Vista Películas</h4>
       <ul>
-        <li>Entra a la pestaña Películas</li>
-        <li>Le dice el título Películas</li>
-        <li>Le dice el nombre de la película, el año y la calificación</li>
+        <li>Le dice el título Películas en Cartelera</li>
+        <li>Le dice la película destacada: su lugar en tendencia, el nombre, la calificación y el año</li>
+        <li>Le dice la sección Películas Populares</li>
+        <li>Le dice el nombre de cada película, el año y la calificación</li>
         <li>Dice que se puede abrir el detalle (Botón)</li>
-        <li>Le dice el menú inferior de 4 opciones: Películas, Buscar, Favoritos y Perfil</li>
+        <li>Dice cargar más (Botón)</li>
+        <li>Le dice el menú inferior de 4 opciones: Películas, Favoritos, Perfil y Buscar</li>
       </ul>
     </td>
     <td valign="top" width="33%">
-      <h4>Vista Perfil</h4>
-      <ul>
-        <li>Le dice el título Mi Perfil</li>
-        <li>Le dice el nombre y el correo del usuario</li>
-        <li>Le dice que la sesión está activa</li>
-        <li>Le dice cuántas favoritas y vistas tiene y su género preferido</li>
-        <li>Dice cerrar sesión (Botón)</li>
-        <li>Le dice que está en la pestaña Perfil</li>
-      </ul>
-    </td>
-  </tr>
-</table>
-
-<!-- Grupo de Imágenes 2 -->
-<table>
-  <tr>
-    <td colspan="3" align="center">
-      <img src="https://github.com/user-attachments/assets/e81c5f39-8edc-4598-b6a2-b0689fe5ed2e" width="100%" />
-    </td>
-  </tr>
-  <tr>
-    <td valign="top" width="33%">
-      <h4>Vista Cargando</h4>
-      <ul>
-        <li>Le dice el título Películas</li>
-        <li>Le dice que se está cargando la cartelera</li>
-        <li>Le dice que espere mientras se obtienen las películas</li>
-        <li>Le dice que está en la pestaña Películas</li>
-      </ul>
-    </td>
-    <td valign="top" width="33%">
-      <h4>Vista Cartelera</h4>
-      <ul>
-        <li>Le dice el título Películas</li>
-        <li>Le dice la sección En cartelera</li>
-        <li>Le dice el nombre de la película, el año, el género y la calificación</li>
-        <li>Dice que se puede abrir el detalle (Botón)</li>
-        <li>Le dice la sección Populares hoy y sus películas</li>
-      </ul>
-    </td>
-    <td valign="top" width="33%">
+      <img src="Docs/screenshots/03-detalle.png" alt="Vista Detalle" width="100%" />
       <h4>Vista Detalle</h4>
       <ul>
-        <li>Dice regresar a Películas (Botón)</li>
-        <li>Le dice el póster de la película</li>
-        <li>Le dice el título y el año</li>
-        <li>Le dice la calificación, la duración y el género</li>
-        <li>Le dice la fecha de estreno</li>
-        <li>Le lee la sinopsis</li>
-        <li>Dice agregar a favoritos (Botón)</li>
-      </ul>
-    </td>
-  </tr>
-</table>
-
-<!-- Grupo de Imágenes 3 -->
-<table>
-  <tr>
-    <td colspan="3" align="center">
-      <img src="https://github.com/user-attachments/assets/215b0cc0-4fe6-4ec8-9744-90c9d1f9de45" width="100%" />
-    </td>
-  </tr>
-  <tr>
-    <td valign="top" width="33%">
-      <h4>Vista Buscador</h4>
-      <ul>
-        <li>Le dice el título Buscar</li>
-        <li>Le dice ¿Qué película buscas? (Campo de texto)</li>
-        <li>Le dice Explora el catálogo</li>
-        <li>Le dice que escriba el título de una película para buscar</li>
-      </ul>
-    </td>
-    <td valign="top" width="33%">
-      <h4>Vista Resultados</h4>
-      <ul>
-        <li>Le dice el título Buscar</li>
-        <li>Le dice el texto escrito en el campo de búsqueda</li>
-        <li>Le dice el nombre de cada resultado, el año, la calificación y el género</li>
-        <li>Dice que se puede abrir el detalle (Botón)</li>
-      </ul>
-    </td>
-    <td valign="top" width="33%">
-      <h4>Vista Sin resultados</h4>
-      <ul>
-        <li>Le dice el título Buscar</li>
-        <li>Le dice el texto escrito en el campo de búsqueda</li>
-        <li>Le dice Sin resultados</li>
-        <li>Le dice que no se encontraron coincidencias para ese texto</li>
-        <li>Le dice que revise la ortografía o busque otro título</li>
-      </ul>
-    </td>
-  </tr>
-</table>
-
-<!-- Grupo de Imágenes 4 -->
-<table>
-  <tr>
-    <td colspan="3" align="center">
-      <img src="https://github.com/user-attachments/assets/fa01c784-1abb-4601-af8e-22a242ca2867" width="100%" />
-    </td>
-  </tr>
-  <tr>
-    <td valign="top" width="33%">
-      <h4>Vista Favoritos vacíos</h4>
-      <ul>
-        <li>Le dice el título Favoritos</li>
-        <li>Le dice Aún no tienes favoritas</li>
-        <li>Le dice que guarde películas tocando el corazón para verlas aquí</li>
-        <li>Dice explorar cartelera (Botón)</li>
-      </ul>
-    </td>
-    <td valign="top" width="33%">
-      <h4>Vista Detalle favorita</h4>
-      <ul>
-        <li>Dice regresar a Películas (Botón)</li>
+        <li>Dice regresar (Botón)</li>
         <li>Le dice el título de la película</li>
-        <li>Le dice que está guardada en favoritos</li>
+        <li>Le dice el año, el género y la calificación</li>
+        <li>Dice agregar a favoritos o quitar de favoritos (Botón)</li>
         <li>Le lee la sinopsis</li>
-        <li>Dice quitar de favoritos (Botón)</li>
-      </ul>
-    </td>
-    <td valign="top" width="33%">
-      <h4>Vista Lista de favoritos</h4>
-      <ul>
-        <li>Le dice el título Favoritos y cuántas películas tiene</li>
-        <li>Le dice el nombre de cada película, el año, el género y la calificación</li>
-        <li>Le dice que está disponible sin conexión</li>
-        <li>Dice que se puede abrir el detalle (Botón)</li>
-        <li>Le dice que deslice a la izquierda para eliminar</li>
       </ul>
     </td>
   </tr>
 </table>
 
-<!-- Grupo de Imágenes 5 -->
 <table>
   <tr>
-    <td colspan="3" align="center">
-      <img src="https://github.com/user-attachments/assets/b4365df4-c838-4f55-83e3-3168992ea51e" width="100%" />
-    </td>
-  </tr>
-  <tr>
     <td valign="top" width="33%">
-      <h4>[Pantalla 1]</h4>
+      <img src="Docs/screenshots/04-favoritos.png" alt="Vista Favoritos" width="100%" />
+      <h4>Vista Favoritos</h4>
       <ul>
-        <li>[Punto 1]</li>
-        <li>[Punto 2]</li>
+        <li>Le dice el título Tus Favoritos</li>
+        <li>Le dice cuántas películas favoritas tiene</li>
+        <li>Le dice el nombre de cada película, el año y la calificación</li>
+        <li>Dice que se puede abrir el detalle (Botón)</li>
+        <li>Al mantener presionada una película, dice quitar de favoritos (Botón)</li>
       </ul>
     </td>
     <td valign="top" width="33%">
-      <h4>[Pantalla 2]</h4>
+      <img src="Docs/screenshots/05-perfil.png" alt="Vista Perfil" width="100%" />
+      <h4>Vista Perfil</h4>
       <ul>
-        <li>[Punto 1]</li>
-        <li>[Punto 2]</li>
+        <li>Le dice el título Perfil</li>
+        <li>Le dice el nombre y el correo del usuario</li>
+        <li>Le dice cuántas películas favoritas tiene guardadas</li>
+        <li>Dice cerrar sesión (Botón)</li>
       </ul>
     </td>
     <td valign="top" width="33%">
-      <h4>[Pantalla 3]</h4>
+      <img src="Docs/screenshots/06-buscar.png" alt="Vista Buscar" width="100%" />
+      <h4>Vista Buscar</h4>
       <ul>
-        <li>[Punto 1]</li>
-        <li>[Punto 2]</li>
+        <li>Le dice el título Buscar Películas</li>
+        <li>Le dice Escribe el nombre de la película (Campo de texto)</li>
+        <li>Le dice Busca una película</li>
+        <li>Le dice que escriba un título para buscar en todo el catálogo de TMDB</li>
       </ul>
     </td>
   </tr>
 </table>
+
+## Documentación técnica
+
+- [Documentación técnica](Docs/documentacion-tecnica.md): arquitectura, networking, persistencia, decisiones técnicas y limitaciones.
+- [Navegación y estado](Docs/navigation-and-state.md)
+- [Investigación MVVM](Docs/investigacion-mvvm.md)
+
+## Integrantes
+
+- Fernando Miranda Romero
+- Leonardo Alarcón García
+
+## Licencia
+
+GPL-3.0. Ver [LICENSE](LICENSE).
