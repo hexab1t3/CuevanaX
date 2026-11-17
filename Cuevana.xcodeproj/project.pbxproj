@@ -3,11 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 110;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		2F99337B3097B8C500DA00C8 /* WaterfallGrid in Frameworks */ = {isa = PBXBuildFile; productRef = 2F99337A3097B8C500DA00C8 /* WaterfallGrid */; };
+		2F9933813097C10000DA00C8 /* PixelKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2F9933803097C10000DA00C8 /* PixelKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			files = (
 				2F99337B3097B8C500DA00C8 /* WaterfallGrid in Frameworks */,
+				2F9933813097C10000DA00C8 /* PixelKit in Frameworks */,
 			);
 		};
 		B4DD879B306A256F0072B65B /* Frameworks */ = {
@@ -118,6 +120,7 @@
 			name = Cuevana;
 			packageProductDependencies = (
 				2F99337A3097B8C500DA00C8 /* WaterfallGrid */,
+				2F9933803097C10000DA00C8 /* PixelKit */,
 			);
 			productName = Cuevana;
 			productReference = B4DD878F306A256E0072B65B /* Cuevana.app */;
@@ -199,6 +202,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				2F9933783097A6B300DA00C8 /* XCRemoteSwiftPackageReference "WaterfallGrid" */,
+				2F99337F3097C10000DA00C8 /* XCLocalSwiftPackageReference "PixelKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B4DD8790306A256E0072B65B /* Products */;
@@ -314,7 +318,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -372,7 +376,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -452,7 +456,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = s.CuevanaTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -473,7 +477,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = s.CuevanaTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -562,6 +566,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		2F99337F3097C10000DA00C8 /* XCLocalSwiftPackageReference "PixelKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = PixelKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		2F9933783097A6B300DA00C8 /* XCRemoteSwiftPackageReference "WaterfallGrid" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -578,6 +589,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2F9933783097A6B300DA00C8 /* XCRemoteSwiftPackageReference "WaterfallGrid" */;
 			productName = WaterfallGrid;
+		};
+		2F9933803097C10000DA00C8 /* PixelKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PixelKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

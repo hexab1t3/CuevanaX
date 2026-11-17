@@ -20,51 +20,31 @@ extension MovieServiceProtocol {
 }
 
 /// Servicio encargado del consumo de la API de TheMovieDB (TMDB).
+/// Las credenciales son provistas de manera desacoplada a través de TMDBConfig,
+/// evitando almacenar llaves directas dentro del repositorio.
 class MovieServices: MovieServiceProtocol {
-    private let apiKey = "04ea24015d782d98c7a91d1ea1d0fa1c"
-    private let host = "api.themoviedb.org"
+    private let host: String
     private let session: URLSession
+    private let tokenProvider: () -> String?
+    private let decoder = JSONDecoder()
 
-    init(session: URLSession = .shared) {
+    init(
+        host: String = TMDBConfig.host,
+        session: URLSession = .shared,
+        tokenProvider: @escaping () -> String? = { TMDBConfig.bearerToken }
+    ) {
+        self.host = host
         self.session = session
+        self.tokenProvider = tokenProvider
     }
 
     /// Obtiene las películas populares de TMDB paginadas
     func fetchPopularMovies(page: Int = 1) async throws -> [Movie] {
-        var components = URLComponents()
-        components.scheme = "https"
-        components.host = host
-        components.path = "/3/movie/popular"
-        components.queryItems = [
-            URLQueryItem(name: "api_key", value: apiKey),
-            URLQueryItem(name: "language", value: "es-MX"),
-            URLQueryItem(name: "page", value: String(page))
-        ]
-
-        guard let url = components.url else {
-            throw NetworkError.invalidURL
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = RequestMethod.get.rawValue
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-
-        let (data, response) = try await session.data(for: request)
-
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw NetworkError.invalidResponse
-        }
-
-        guard 200..<300 ~= httpResponse.statusCode else {
-            throw NetworkError.httpError(statusCode: httpResponse.statusCode)
-        }
-
-        do {
-            let decoded = try JSONDecoder().decode(TMDBMovieResponse.self, from: data)
-            return decoded.results.map { $0.toMovie() }
-        } catch {
-            throw NetworkError.decodingError(error.localizedDescription)
-        }
+        let response: TMDBMovieResponse = try await request(
+            path: "/3/movie/popular",
+            queryItems: [URLQueryItem(name: "page", value: String(page))]
+        )
+        return response.results.map { $0.toMovie() }
     }
 
     /// Busca películas por título en TMDB
@@ -72,25 +52,43 @@ class MovieServices: MovieServiceProtocol {
         let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedQuery.isEmpty else { return [] }
 
+        let response: TMDBMovieResponse = try await request(
+            path: "/3/search/movie",
+            queryItems: [URLQueryItem(name: "query", value: trimmedQuery)]
+        )
+        return response.results.map { $0.toMovie() }
+    }
+
+    /// Ejecuta la petición, valida el código HTTP y decodifica la respuesta
+    private func request<T: Decodable>(path: String, queryItems: [URLQueryItem]) async throws -> T {
+        guard let token = tokenProvider(), !token.isEmpty else {
+            throw NetworkError.missingToken
+        }
+
         var components = URLComponents()
-        components.scheme = "https"
+        components.scheme = TMDBConfig.scheme
         components.host = host
-        components.path = "/3/search/movie"
-        components.queryItems = [
-            URLQueryItem(name: "api_key", value: apiKey),
-            URLQueryItem(name: "language", value: "es-MX"),
-            URLQueryItem(name: "query", value: trimmedQuery)
-        ]
+        components.path = path
+        components.queryItems = [URLQueryItem(name: "language", value: TMDBConfig.defaultLanguage)] + queryItems
 
         guard let url = components.url else {
             throw NetworkError.invalidURL
         }
 
-        var request = URLRequest(url: url)
-        request.httpMethod = RequestMethod.get.rawValue
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = RequestMethod.get.rawValue
+        urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 
-        let (data, response) = try await session.data(for: request)
+        let data: Data
+        let response: URLResponse
+        do {
+            (data, response) = try await session.data(for: urlRequest)
+        } catch let urlError as URLError where urlError.code == .cancelled {
+            throw CancellationError()
+        } catch let urlError as URLError {
+            throw NetworkError.connectivity(urlError.localizedDescription)
+        }
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw NetworkError.invalidResponse
@@ -101,8 +99,7 @@ class MovieServices: MovieServiceProtocol {
         }
 
         do {
-            let decoded = try JSONDecoder().decode(TMDBMovieResponse.self, from: data)
-            return decoded.results.map { $0.toMovie() }
+            return try decoder.decode(T.self, from: data)
         } catch {
             throw NetworkError.decodingError(error.localizedDescription)
         }
@@ -121,6 +118,7 @@ struct TMDBMovieItem: Decodable {
     let voteAverage: Double
     let releaseDate: String?
     let posterPath: String?
+    let backdropPath: String?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -129,6 +127,7 @@ struct TMDBMovieItem: Decodable {
         case voteAverage = "vote_average"
         case releaseDate = "release_date"
         case posterPath = "poster_path"
+        case backdropPath = "backdrop_path"
     }
 
     /// Transforma el DTO de red al modelo de dominio Movie
@@ -146,7 +145,8 @@ struct TMDBMovieItem: Decodable {
             premiereDate: releaseDate ?? "",
             sinopsis: overview.isEmpty ? "Sin sinopsis disponible." : overview,
             tmdbId: id,
-            posterPath: posterPath
+            posterPath: posterPath,
+            backdropPath: backdropPath
         )
     }
 }
