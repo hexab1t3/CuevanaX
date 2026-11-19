@@ -119,24 +119,16 @@ struct MovieDetailView: View {
                 )
             }
             .overlay {
-                // Mosaico de PixelKit, difuminado y solo en la parte de abajo para no tapar el póster
+                // Mosaico de PixelKit solo en la parte de abajo para no tapar el póster.
+                // El desvanecido lo hace la propia librería (verticalFade): antes se usaban
+                // .blur y .mask, que obligaban a crear capas extra en cada cuadro de la animación.
                 PixelMosaicView(
                     darkColor: Theme.deepViolet,
                     lightColor: Theme.violet,
                     sparkleColor: Theme.lilac,
-                    brightness: 0.7
+                    brightness: 0.7,
+                    verticalFade: 0.22...0.58
                 )
-                    .blur(radius: 0.5)
-                    .mask {
-                        LinearGradient(
-                            stops: [
-                                .init(color: .clear, location: 0.22),
-                                .init(color: .black, location: 0.58)
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    }
             }
             .ignoresSafeArea()
     }
