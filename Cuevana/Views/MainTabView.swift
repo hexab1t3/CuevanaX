@@ -25,7 +25,8 @@ struct MainTabView: View {
                 ProfileView(isAuthenticated: $isAuthenticated)
             }
 
-            Tab("Buscar", systemImage: "magnifyingglass", role: .search) {
+            // Sin role: .search, para que Buscar quede dentro de la barra como las demás pestañas
+            Tab("Buscar", systemImage: "magnifyingglass") {
                 FindView()
             }
         }

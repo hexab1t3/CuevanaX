@@ -32,7 +32,13 @@ enum Theme {
 /// Fondo con degradado de malla y mosaico pixel; en el login el degradado se anima lentamente.
 struct AmbientBackground: View {
     var animated = false
-    @State private var isShifted = false
+
+    @State private var start = Date()
+    @State private var isVisible = false
+    /// Cuándo se pausó el degradado; al reanudar se recorre `start` para que no brinque.
+    @State private var pausedAt: Date?
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.scenePhase) private var scenePhase
 
     private static let colors: [Color] = [
         Theme.background, Theme.violet.mix(with: Theme.background, by: 0.55), Theme.background,
@@ -40,19 +46,19 @@ struct AmbientBackground: View {
         Theme.background, Theme.amber.mix(with: Theme.background, by: 0.8), Theme.background
     ]
 
-    private var points: [SIMD2<Float>] {
-        let center: SIMD2<Float> = isShifted ? [0.7, 0.35] : [0.3, 0.6]
-        return [
-            [0, 0], [0.5, 0], [1, 0],
-            [0, 0.5], center, [1, 0.5],
-            [0, 1], [0.5, 1], [1, 1]
-        ]
-    }
-
     var body: some View {
         ZStack {
-            MeshGradient(width: 3, height: 3, points: points, colors: Self.colors)
+            if animated {
+                // El centro del degradado va y viene cada 12 s. Se redibuja 20 veces por segundo;
+                // antes se usaba repeatForever, que redibujaba toda la pantalla a la frecuencia
+                // del monitor (hasta 120 veces por segundo) sin parar.
+                TimelineView(.animation(minimumInterval: 1.0 / 20.0, paused: isMeshPaused)) { timeline in
+                    mesh(shift: shift(at: timeline.date))
+                }
                 .ignoresSafeArea()
+            } else {
+                mesh(shift: 0)
+            }
 
             // Mosaico pixel de nuestra librería PixelKit, encima del degradado.
             PixelMosaicView(
@@ -64,11 +70,40 @@ struct AmbientBackground: View {
                 brightness: 0.8
             )
         }
-        .onAppear {
+        .onAppear { isVisible = true }
+        .onDisappear { isVisible = false }
+        .onChange(of: isMeshPaused, initial: true) { _, paused in
             guard animated else { return }
-            withAnimation(.easeInOut(duration: 6).repeatForever(autoreverses: true)) {
-                isShifted.toggle()
+            if paused {
+                if pausedAt == nil { pausedAt = Date() }
+            } else if let pausedSince = pausedAt {
+                start = start.addingTimeInterval(Date().timeIntervalSince(pausedSince))
+                pausedAt = nil
             }
         }
+    }
+
+    /// Se pausa si no se ve, si la app no está activa o si el usuario pidió reducir el movimiento.
+    private var isMeshPaused: Bool {
+        !isVisible || reduceMotion || scenePhase != .active
+    }
+
+    /// `shift` va de 0 (centro abajo a la izquierda) a 1 (centro arriba a la derecha).
+    private func mesh(shift: Float) -> some View {
+        let center: SIMD2<Float> = [0.3 + 0.4 * shift, 0.6 - 0.25 * shift]
+        let points: [SIMD2<Float>] = [
+            [0, 0], [0.5, 0], [1, 0],
+            [0, 0.5], center, [1, 0.5],
+            [0, 1], [0.5, 1], [1, 1]
+        ]
+        return MeshGradient(width: 3, height: 3, points: points, colors: Self.colors)
+            .ignoresSafeArea()
+    }
+
+    /// 0 → 1 → 0 cada 12 segundos, arrancando y frenando suave
+    /// (igual que el easeInOut de 6 s de ida y 6 s de vuelta que había antes).
+    private func shift(at date: Date) -> Float {
+        let seconds = date.timeIntervalSince(start)
+        return Float(0.5 - 0.5 * cos(seconds * .pi / 6))
     }
 }
